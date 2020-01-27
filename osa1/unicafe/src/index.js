@@ -45,7 +45,7 @@ const Statistics = ({good, neutral, bad}) => {
     }
     return (
     <tbody>
-              <table>
+          <table>
             <StatisticLine name='good' value={good}/>
             <StatisticLine name='neutral' value={neutral}/>
             <StatisticLine name='bad' value={bad}/>
