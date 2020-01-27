@@ -29,7 +29,7 @@ const App = (props) => {
         <h1>most voted anecdote:</h1>
 
         {props.anecdotes[mostvoted]}
-
+    <p>has {most} votes</p>
     </div>
   )
 }
