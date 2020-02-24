@@ -12,11 +12,10 @@ console.log(blogService.getAll)
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [loginVisible, setLoginVisible] = useState(false)
-  const [showAll, setShowAll] = useState(true)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [, setErrorMessage] = useState(null)
 
 
   const blogFormRef = React.createRef()
@@ -60,10 +59,16 @@ const App = () => {
   }
   const blogForm = () => (
     <Togglable buttonLabel="new blog" ref={blogFormRef}>
-      <BlogForm createBlog={addBlog}/>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
-
+  const removeBlog = async (blog) => {
+    if (window.confirm(`Are you sure you want to delete blog: ${blog.title}`)) {
+      await blogService.remove(blog.id)
+      const blogs = await blogService.getAll()
+      setBlogs(blogs)
+    }
+  }
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
@@ -72,6 +77,14 @@ const App = () => {
         setBlogs(blogs.concat(returnedBlog))
       })
   }
+  const updateBlog = async (id, blog) => {
+    const updatedblog = await blogService.update(id, blog)
+    const blogs = await blogService.getAll()
+    blogs.sort((a, b) => b.likes - a.likes)
+    setBlogs(blogs.map(blog => blog.id !== id ? blog : updatedblog))
+
+  }
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -93,7 +106,7 @@ const App = () => {
       }, 5000)
     }
   }
-  const handleLogout = (event) => {
+  const handleLogout = () => {
     window.localStorage.clear()
 
   }
@@ -110,12 +123,13 @@ const App = () => {
 
           {blogForm()}
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />)
+            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} remove={removeBlog} />)
           }
         </div>
       }
     </div>
   )
 }
+
 
 export default App
